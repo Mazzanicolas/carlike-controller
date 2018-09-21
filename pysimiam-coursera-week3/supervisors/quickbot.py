@@ -98,7 +98,7 @@ class QuickBotSupervisor(Supervisor):
 
         vl = (summ-diff)/2
         vr = (summ+diff)/2
-        x, y, theta = self.robot.cheat.get_pose()
+        x, y, theta = self.robot.robot_pose.get_pose()
         angle = atan2(self.parameters.goal.y - y, self.parameters.goal.x - x) - theta
         return v, angle
 

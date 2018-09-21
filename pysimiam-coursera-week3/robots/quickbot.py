@@ -150,7 +150,7 @@ class QuickBot(Robot):
         self.ang_velocity = (0.0,0.0)
 
         self.info = Struct()
-        self.info.cheat = self
+        self.info.robot_pose = self
         self.info.wheels = Struct()
         # these were the original parameters
         self.info.wheels.radius = 0.0325
