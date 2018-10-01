@@ -40,7 +40,8 @@ class QuickBot(Robot):
         Robot.__init__(self, pose, color)
         self.size = 0.1
         self.wheels_angle = 0
-        
+        self.front_wheels_ang_vel = 0
+
         # create shape
         self._shapes = Struct()
         
@@ -208,6 +209,7 @@ class QuickBot(Robot):
     def move(self,dt):
         # There's no need to use the integrator - these equations have a solution        
         #(vl, vr) = self.get_wheel_speeds()
+        # self.wheels_angle += self.front_wheels_ang_vel * dt
         (v,w) = self.diff2car((1, self.wheels_angle))
         x, y, theta = self.get_pose()
         if w == 0:
@@ -268,14 +270,14 @@ class QuickBot(Robot):
     def set_wheel_speeds(self,*args):#angle
 
         if len(args) == 2:
-            (back_wheels_v, alpha) = args
+            (back_wheels_v, target_alpha) = args
         else:
-            (back_wheels_v, alpha) = args[0]
+            (back_wheels_v, target_alpha) = args[0]
         
         #left_ms  = clump(back_wheels_v, -self.info.wheels.max_velocity,
          #                     self.info.wheels.max_velocity)
-        angle = self.clump(alpha, (-pi/2), (pi/2))
-        #self.ang_velocity = (left_ms, right_ms)
+        angle = self.clump(target_alpha, (-pi/2), (pi/2))
+        self.front_wheels_ang_vel = 2 * (target_alpha - angle)
         self.wheels_angle = angle
 
     def clump(self, value, lower_bound, upper_bound):
