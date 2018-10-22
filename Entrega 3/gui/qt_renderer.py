@@ -112,13 +112,13 @@ class QtRenderer(Renderer):
             c.setAlpha((color >> 24) & 0xFF)
         return c
 
-    def set_pen(self,color=0, thickness=0):
-        """Sets the line color and thickness.
+    def set_pen(self,color):
+        """Sets the line color.
         Color is interpreted as 0xAARRGGBB."""
         if color is None:
             self._painter.setPen(Qt.NoPen)
         else:
-            self._painter.setPen(QPen(self.__qcolor(color),thickness))
+            self._painter.setPen(self.__qcolor(color))
 
     def set_brush(self,color):
         """Sets the fill color.

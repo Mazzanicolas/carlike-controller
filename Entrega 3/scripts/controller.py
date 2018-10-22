@@ -21,7 +21,7 @@ class Controller():
         self.set_parameters(params)
         self.restart()
     
-    def execute(self, state, dt):
+    def execute(self, state, dt, t):
         """Given a state and elapsed time, calculate and return robot motion parameters
 
         :param state: Output from the supervisor :meth:`~Supervisor.process` method

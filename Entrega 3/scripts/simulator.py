@@ -121,22 +121,9 @@ class Simulator(threading.Thread):
             if thing_type == 'robot':
                 robot_type, supervisor_type, robot_pose, robot_color  = thing[1:5]
                 try:
-                    # Get options
-                    if len(thing) > 5:
-                        robot_options = thing[5]
-                        if robot_options is not None:
-                            robot_options = helpers.Struct(robot_options)
-                        super_options = thing[6]
-                        if super_options is not None:
-                            super_options = helpers.Struct(super_options)
-
                     # Create robot
                     robot_class = helpers.load_by_name(robot_type,'robots')
-                    if robot_options is not None:
-                        robot = robot_class(pose.Pose(robot_pose), options = robot_options)
-                    else:
-                        robot = robot_class(pose.Pose(robot_pose))
-                    robot.set_logqueue(self.__log_queue)
+                    robot = robot_class(pose.Pose(robot_pose))
                     if robot_color is not None:
                         robot.set_color(robot_color)
                     elif len(self.__robots) < 8:
@@ -147,10 +134,7 @@ class Simulator(threading.Thread):
                     
                     info = robot.get_info()
                     info.color = robot.get_color()
-                    if super_options is not None:
-                        supervisor = sup_class(robot.get_pose(), info, options = super_options)
-                    else:
-                        supervisor = sup_class(robot.get_pose(), info)                        
+                    supervisor = sup_class(robot.get_pose(), info)
                     supervisor.set_logqueue(self.__log_queue)
                     name = "Robot {}: {}".format(len(self.__robots)+1, sup_class.__name__)
                     if self.__supervisor_param_cache is not None and \
@@ -165,7 +149,8 @@ class Simulator(threading.Thread):
                     self.__robots.append(robot)
                     
                     # Create trackers
-                    self.__trackers.append(simobject.Path(robot.get_pose(),robot.get_color()))
+                    self.__trackers.append(simobject.Path(robot.get_pose(),robot))
+                    self.__trackers[-1].set_color(robot.get_color())
                 except:
                     self.log("[Simulator.construct_world] Robot creation failed!")
                     raise
@@ -268,7 +253,7 @@ class Simulator(threading.Thread):
                     # Now calculate supervisor outputs for the new position
                     for i, supervisor in enumerate(self.__supervisors):
                         info = self.__robots[i].get_info()
-                        inputs = supervisor.execute( info, time_constant)
+                        inputs = supervisor.execute( info, time_constant, self.__time)
                         self.__robots[i].set_inputs(inputs)
                         self.fwd_logqueue()
 
@@ -564,7 +549,7 @@ class Simulator(threading.Thread):
         if len(collisions) > 0:
             # Test code - print out collisions
             for (robot, obstacle) in collisions:
-                self.log("Collision with {}".format(obstacle), obj = robot, color=robot.get_color())
+                self.log("Collision with {}".format(obstacle), obj = robot)
             # end of test code
             return True
                 
@@ -591,11 +576,11 @@ class Simulator(threading.Thread):
                 self.log("Wrong simulator event format '{}'".format(tpl))
             self.__in_queue.task_done()
     
-    def log(self, message, obj=None, color=None):
+    def log(self, message, obj=None):
         if obj is None:
             obj = self
         print("{}: {}".format(obj.__class__.__name__,message))
-        self._out_queue.put(("log",(message,obj.__class__.__name__,color)))
+        self._out_queue.put(("log",(message,obj.__class__.__name__,None)))
         
     def fwd_logqueue(self):
         while self.__log_queue:

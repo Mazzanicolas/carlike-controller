@@ -16,10 +16,9 @@ from helpers import Struct
 class QuickBot_IRSensor(ProximitySensor):
     """Inherits from the proximity sensor class. Performs calculations specific to the khepera3 for its characterized proximity sensors"""
     
-    ir_coeff = np.array([  1.16931064e+07,  -1.49425626e+07, \
-                           7.96904053e+06,  -2.28884314e+06, \
-                           3.80068213e+05,  -3.64435691e+04, \
-                           1.89558821e+03])
+    ir_coeff = np.array([  8.56495710e-18,  -3.02930608e-14,   4.43025017e-11,
+                          -3.49052288e-08,   1.61452174e-05,  -4.44025236e-03,
+                           6.74137385e-01])
     
     def __init__(self,pose,robot):
         # values copied from SimIAm    
@@ -157,8 +156,7 @@ class QuickBot(Robot):
         self.info.wheels.left_ticks = 0
         self.info.wheels.right_ticks = 0
         
-        self.info.wheels.max_velocity = 2*pi*130/60 # 130 RPM
-        self.info.wheels.min_velocity = 2*pi*30/60  #  30 RPM
+        self.info.wheels.max_velocity = 8.377
         
         self.left_revolutions = 0.0
         self.right_revolutions = 0.0
@@ -166,8 +164,8 @@ class QuickBot(Robot):
         self.info.ir_sensors = Struct()
         self.info.ir_sensors.poses = ir_sensor_poses
         self.info.ir_sensors.readings = None
-        self.info.ir_sensors.rmax = 0.3
-        self.info.ir_sensors.rmin = 0.04
+        self.info.ir_sensors.rmax = 0.2
+        self.info.ir_sensors.rmin = 0.02
 
     def draw(self,r):
         r.set_pose(self.get_pose())

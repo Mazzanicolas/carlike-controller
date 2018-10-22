@@ -139,9 +139,7 @@ class XMLReader(XMLObject):
                                           (float(x),
                                            float(y),
                                            float(theta)),
-                                          robot_color,
-                                          robot.get('options',None),
-                                          supervisor.get('options',None)))
+                                          robot_color))
             except ValueError:
                 raise Exception(
                     '[XMLReader._parse_simulation] Invalid robot (bad value)!') 
