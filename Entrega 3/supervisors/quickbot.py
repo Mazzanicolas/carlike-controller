@@ -104,9 +104,24 @@ class QuickBotSupervisor(Supervisor):
 
         angle = atan2(self.parameters.goal.y - y, self.parameters.goal.x - x) - theta
 
-        for distance in distances:
-            if distance < 100:
-                angle = pi/4
+        newAngle = 0
+
+        if distances[0] < 100:
+            newAngle -= pi/6
+        if distances[1] < 100:
+            newAngle -= pi/3
+        if distances[3] < 100:
+            newAngle += pi/3
+        if distances[4] < 100:
+            newAngle += pi/6
+
+        # if distances[2] < 100:
+        #     if newAngle == 0:
+        #         newAngle = pi/4
+        #     newAngle *= 1.5
+
+        if newAngle != 0:
+            angle = newAngle
 
         return v, angle
 
