@@ -253,7 +253,7 @@ class Simulator(threading.Thread):
                     # Now calculate supervisor outputs for the new position
                     for i, supervisor in enumerate(self.__supervisors):
                         info = self.__robots[i].get_info()
-                        inputs = supervisor.execute( info, time_constant, self.__time)
+                        inputs = supervisor.execute( info, time_constant)
                         self.__robots[i].set_inputs(inputs)
                         self.fwd_logqueue()
 
